@@ -1,0 +1,50 @@
+Heart Sound Classification — Model Evaluation Results
+====================================================
+
+Model    : HuBERT-ResCNN-BiGRU
+Dataset  : Phonocardiogram (PCG) audio recordings
+Task     : Binary Classification (Healthy / Unhealthy)
+Input Dim: 2048 (HuBERT last hidden state + mean pooled, concatenated)
+
+────────────────────────────────────────────────────
+Metric              Value
+────────────────────────────────────────────────────
+Accuracy            96.34%
+Precision           98.39%
+Recall              98.34%
+F1-Score            98.34%
+ROC-AUC             99.59%
+────────────────────────────────────────────────────
+
+Confusion Matrix (Validation Set)
+────────────────────────────────────────────────────
+                  Predicted
+                  Healthy     Unhealthy
+True  Healthy       145           5
+      Unhealthy       0         151
+────────────────────────────────────────────────────
+
+Key Observations:
+  - Zero false negatives: all unhealthy hearts correctly identified
+  - 5 false positives: healthy hearts misclassified as unhealthy
+  - High ROC-AUC (99.59%) indicates excellent discriminative ability
+    across all classification thresholds
+
+Training Configuration
+────────────────────────────────────────────────────
+Optimizer           Adam (lr=1e-4, weight_decay=1e-5)
+Scheduler           CosineAnnealingLR (T_max=20, eta_min=1e-6)
+Loss Function       CrossEntropyLoss (class-weighted) + L1 regularization
+Batch Size          32
+Max Epochs          100
+Sampler             WeightedRandomSampler (class imbalance handling)
+Augmentations:       Gaussian noise, time shift, SpecAugment
+
+Architecture Summary
+────────────────────────────────────────────────────
+Feature Extractor   facebook/hubert-large-ll60k
+Feature Dim         2048 (1024 last token + 1024 mean pool)
+CNN Backbone        Conv1d (k=7) → ResBlock x3 (64→128→256→512) → AdaptiveAvgPool
+GRU                 Bidirectional, 2 layers, hidden_dim=256, dropout=0.3
+Classifier          Linear(512→128) → ReLU → Dropout(0.4) → Linear(128→2)
+Total Output        2 classes (healthy, unhealthy)

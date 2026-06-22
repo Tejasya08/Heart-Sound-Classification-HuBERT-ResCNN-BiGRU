@@ -191,7 +191,7 @@ The proposed model achieved a **ROC-AUC score of 99.59%**, indicating excellent 
 ## 📈 Training Curves
 
 <p align="center">
-  <img src="images/Training and Validation Loss.png" width="650">
+  <img src="images/Training And Validation Loss.png" width="650">
 </p>
 
 The training and validation curves demonstrate stable convergence and effective learning throughout training.
